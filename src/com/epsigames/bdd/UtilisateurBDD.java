@@ -16,30 +16,23 @@ public class UtilisateurBDD {
     private Connection connexion;
 
     public List<Utilisateur> recupererUtilisateurs() {
+        
+        
         List<Utilisateur> utilisateurs = new ArrayList<Utilisateur>();
-
-        // Represente la requete Sql
         Statement statement = null;
-        // Représente les résultats
         ResultSet resultat = null;
 
         loadDatabase();
         try {
 
             statement = connexion.createStatement();
-
-            // Exécution de la requète
             resultat = statement.executeQuery( "Select nom, prenom FROM utilisateur;" );
-
-            // Récupération des données
             while ( resultat.next() ) {
 
                 String nom = resultat.getString( "nom" );
-                String prenom = resultat.getString( "prenom" );
 
                 Utilisateur utilisateur = new Utilisateur();
                 utilisateur.setNom( nom );
-                utilisateur.setPrenom( prenom );
 
                 utilisateurs.add( utilisateur );
             }
@@ -55,7 +48,7 @@ public class UtilisateurBDD {
                 if ( connexion != null )
                     connexion.close();
             } catch ( SQLException ignore ) {
-
+                System.out.println("Error");
             }
         }
         return utilisateurs;
@@ -63,8 +56,6 @@ public class UtilisateurBDD {
     }
 
     private void loadDatabase() {
-        // Chargement du driver
-        // Chargement du driver
         try {
             Class.forName( "com.mysql.jdbc.Driver" );
         } catch ( ClassNotFoundException e ) {
@@ -72,7 +63,7 @@ public class UtilisateurBDD {
         }
 
         try {
-            connexion = DriverManager.getConnection( "jdbc:mysql://localhost:3306/epsigames", "root", "livio" );
+            connexion = DriverManager.getConnection( "jdbc:mysql://localhost:3306/orm_epsigames", "root", "" );
         } catch ( SQLException e ) {
             e.printStackTrace();
 
@@ -85,12 +76,10 @@ public class UtilisateurBDD {
 
         try {
             PreparedStatement preparedStatement = connexion.prepareStatement(
-                    "Insert INTO utilisateur (nom, prenom, adresse, motDePasse,email) VALUES (?, ?, ?, ?, ?);" );
+                    "Insert INTO utilisateur (nom, login, mdp) VALUES (?, ?, ?);" );
             preparedStatement.setString( 1, utilisateur.getNom() );
-            preparedStatement.setString( 2, utilisateur.getPrenom() );
-            preparedStatement.setString( 3, utilisateur.getAdresse() );
-            preparedStatement.setString( 4, utilisateur.getMotDePasse() );
-            preparedStatement.setString( 5, utilisateur.getEmail() );
+            preparedStatement.setString( 3, utilisateur.getEmail() );
+            preparedStatement.setString( 2, utilisateur.getMotDePasse() );
 
             preparedStatement.executeUpdate();
         } catch ( SQLException e ) {

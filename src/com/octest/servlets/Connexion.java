@@ -38,18 +38,18 @@ public class Connexion extends HttpServlet {
 
     protected void doGet( HttpServletRequest request, HttpServletResponse response )
             throws ServletException, IOException {
-        // Tentative de récupération du cookie depuis la requête
+        // Tentative de rï¿½cupï¿½ration du cookie depuis la requï¿½te
         String derniereConnexion = getCookieValue( request, COOKIE_DERNIERE_CONNEXION );
-        // Si le cookie existe , alors calcul de la durée
+        // Si le cookie existe , alors calcul de la durï¿½e
         if ( derniereConnexion != null ) {
-            // Récupération de la date courante
+            // Rï¿½cupï¿½ration de la date courante
             DateTime dtCourante = new DateTime();
-            // Récupération de la date présente dans le cookie
+            // Rï¿½cupï¿½ration de la date prï¿½sente dans le cookie
             DateTimeFormatter formatter = DateTimeFormat.forPattern( FORMAT_DATE );
             DateTime dtDerniereConnexion = formatter.parseDateTime( derniereConnexion );
-            // Calcul de la durée de l'intervalle
+            // Calcul de la durï¿½e de l'intervalle
             Period periode = new Period( dtDerniereConnexion, dtCourante );
-            // Formatage de la durée de l'intervalle
+            // Formatage de la durï¿½e de l'intervalle
             PeriodFormatter periodFormatter = new PeriodFormatterBuilder()
                     .appendYears().appendSuffix( "an", "ans" )
                     .appendMonths().appendSuffix( "mois" )
@@ -59,7 +59,7 @@ public class Connexion extends HttpServlet {
                     .appendSeconds().appendSuffix( "seconde", "secondes" )
                     .toFormatter();
             String intervalleConnexions = periodFormatter.print( periode );
-            // ajout de l'intervalle en tant qu'atribut de la requête
+            // ajout de l'intervalle en tant qu'atribut de la requï¿½te
             request.setAttribute( ATT_INTERVALLE_CONNEXIONS, intervalleConnexions );
 
         }
@@ -67,43 +67,25 @@ public class Connexion extends HttpServlet {
         this.getServletContext().getRequestDispatcher( VUE ).forward( request, response );
     }
 
-    /**
-     * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-     *      response)
-     */
     protected void doPost( HttpServletRequest request, HttpServletResponse response )
             throws ServletException, IOException {
-        // TODO Auto-generated method stub
-        // Préparation de l'objet formulaire
-        ConnexionForm form = new ConnexionForm();
-        // traitement de la requête et récup du bean resultant
-        Utilisateur utilisateur = form.connecterUtilisateur( request );
 
-        // Récupération de la session depuis la requête
+        ConnexionForm form = new ConnexionForm();
+        Utilisateur utilisateur = form.connecterUtilisateur( request );
         HttpSession session = request.getSession();
-        /*
-         * Si aucune erreur de validation n'a eu lieu, alors ajout du bean
-         * Utilisateur à la session, sinon suppression du bean de la session
-         */
         if ( form.getErreurs().isEmpty() ) {
             session.setAttribute( ATT_SESSION_USER, utilisateur );
         } else {
             session.setAttribute( ATT_SESSION_USER, null );
         }
-        /* Si et seulement si la case du formulaire est cochéee */
         if ( request.getParameter( CHAMP_MEMOIRE ) != null ) {
-            // Récupération de la date courante
             DateTime dt = new DateTime();
-            // Formatage de la date et conversion en texte
             DateTimeFormatter formatter = DateTimeFormat.forPattern( FORMAT_DATE );
             String dateDerniereConnexion = dt.toString( formatter );
-            // Création du cookie , et ajoute à la reponde http
             setCookie( response, COOKIE_DERNIERE_CONNEXION, dateDerniereConnexion, COOKIE_MAX_AGE );
         } else {
-            // demande de suppression du cookie navigateur
             setCookie( response, COOKIE_DERNIERE_CONNEXION, "", 0 );
         }
-        /* Stockage du formulaire et du bean dans l'objet request */
         request.setAttribute( ATT_FORM, form );
         request.setAttribute( ATT_USER, utilisateur );
         this.getServletContext().getRequestDispatcher( VUE ).forward( request, response );

@@ -19,33 +19,25 @@ public class JeuxBDD {
 
         // Represente la requete Sql
         Statement statement = null;
-        // Représente les résultats
+        // Reprï¿½sente les rï¿½sultats
         ResultSet resultat = null;
 
         loadDatabase();
         try {
 
             statement = connexion.createStatement();
-
-            // Exécution de la requète
-            resultat = statement.executeQuery( "Select titre, societeDeProduction FROM jeux;" );
-
-            // Récupération des données
-            while ( resultat.next() ) {
+            resultat = statement.executeQuery( "Select titre, Producteur FROM jeux;" );
+            while ( resultat.next() ) {             
 
                 String titre = resultat.getString( "titre" );
-                String societeDeProduction = resultat.getString( "societeDeProduction" );
 
                 Jeux jeux1 = new Jeux();
                 jeux1.setTitre( titre );
-                jeux1.setSocieteDeProduction( societeDeProduction );
-
                 jeux.add( jeux1 );
             }
         } catch ( SQLException e ) {
 
         } finally {
-            // Fermeture de la connexion
             try {
                 if ( resultat != null )
                     resultat.close();
@@ -62,16 +54,9 @@ public class JeuxBDD {
     }
 
     private void loadDatabase() {
-        // Chargement du driver
-        // Chargement du driver
-        try {
-            Class.forName( "com.mysql.jdbc.Driver" );
-        } catch ( ClassNotFoundException e ) {
-
-        }
 
         try {
-            connexion = DriverManager.getConnection( "jdbc:mysql://localhost:3306/epsigames", "root", "livio" );
+            connexion = DriverManager.getConnection( "jdbc:mysql://localhost:3306/epsigames", "root", "" );
         } catch ( SQLException e ) {
             e.printStackTrace();
 
@@ -81,21 +66,23 @@ public class JeuxBDD {
 
     public void ajouterJeux( Jeux jeux ) {
         loadDatabase();
+        
+        
+        try {
+            Class.forName( "com.mysql.jdbc.Driver" );
+        } catch ( ClassNotFoundException e ) {
 
+        }
+        
         try {
             PreparedStatement preparedStatement = connexion.prepareStatement(
                     "Insert INTO jeux (titre, sousTitre, societeDeProduction, description, genre, paysDeProduction, anneeDeProduction) VALUES (?, ?, ?, ?, ?, ?,?);" );
             preparedStatement.setString( 1, jeux.getTitre() );
             preparedStatement.setString( 2, jeux.getSousTitre() );
-            preparedStatement.setString( 3, jeux.getSocieteDeProduction() );
-            preparedStatement.setString( 4, jeux.getPaysDeProduction() );
-            preparedStatement.setString( 5, jeux.getDescription() );
             preparedStatement.setString( 6, jeux.getGenre() );
-            preparedStatement.setString( 7, jeux.getAnneeDeRealisation() );
 
             preparedStatement.executeUpdate();
         } catch ( SQLException e ) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 

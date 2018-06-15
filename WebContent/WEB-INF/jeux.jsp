@@ -4,14 +4,10 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Tests JDBC<title>
-<link type="text/css" rel="stylesheet" href="<c:url value="/inc/form.css"/>" />
+<title>Jeux</title>
 </head>
 <body>
-	<h1>Tests JDBC</h1>
-	<c:forEach items="$ { messages }" var="message" varStatus="boucle">
-		<p>${ boucle.count }. ${message }</p>
-	</c:forEach>
+	<p> Bonjour , vous êtes sur la page des jeux </p>
 
 </body>
 </html>
